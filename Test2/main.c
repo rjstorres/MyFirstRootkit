@@ -151,14 +151,11 @@ ssize_t rtkit_write(struct file *file, const char __user *buff, size_t count, lo
         return count;*/
 }
 
-struct file_operations new_proc_fops = {
-    read : &rtkit_read,
-    write : &rtkit_write
-};
+
 
 static int __init procfs_init(void)
 {
-
+    struct file_operations new_proc_fops;
     proc_rtkit = proc_create("rtkit", 0666, NULL, &new_proc_fops);
     if (proc_rtkit == NULL)
         return 0;
@@ -168,7 +165,8 @@ static int __init procfs_init(void)
     {
         return 0;
     }
-
+new_proc_fops.read=&rtkit_read;
+new_proc_fops.write=&rtkit_write;
     /*//substitute proc readdir to our wersion (using page mode change)
 	proc_fops = ((struct file_operations *) proc_root->proc_fops);
 	proc_readdir_orig = proc_fops->readdir;
