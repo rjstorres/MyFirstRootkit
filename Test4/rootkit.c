@@ -62,13 +62,13 @@ write_cr0 (read_cr0 () | 0x10000);*/
 //Grep for "set_pages_ro" and "set_pages_rw" in:
 //      /boot/System.map-`$(uname -r)`
 //      e.g. /boot/System.map-3.13.0.77-generic
-void (*pages_rw)(struct page *page, int numpages) = (void *)0xffffffff81078c50;
-void (*pages_ro)(struct page *page, int numpages) = (void *)0xffffffff81078be0;
+void (*pages_rw)(struct page *page, int numpages) = (void *)0xc1068be0;
+void (*pages_ro)(struct page *page, int numpages) = (void *)0xc1069bc0;
 
 //This is a pointer to the system call table in memory
 //Defined in /usr/src/linux-source-`$(uname -r)`/arch/x86/include/asm/syscall.h
 //We're getting its adddress from the System.map file (see above: find sys_call_table).
-static unsigned long *sys_call_table = (unsigned long *)0xffffffff81e001a0;
+static unsigned long *sys_call_table = (unsigned long *)0xc189f1a0;
 
 //Function pointer will be used to save address of original 'open' syscall.
 //The asmlinkage keyword is a GCC #define that indicates this function
