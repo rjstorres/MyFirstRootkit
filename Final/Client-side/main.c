@@ -1,8 +1,10 @@
-#include "Communication.h"
+#include "ModuleCommunication.h"
 
-main(int argc, char const *argv[])
+int main(int argc, char const *argv[])
 {
-    /* code */
+    char input[] = "asbcsfdf=safsfds  ";
+  
+    check_option_type(input);
     return 0;
 }
 
