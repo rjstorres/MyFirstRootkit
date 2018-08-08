@@ -50,7 +50,7 @@ struct proc_dir_entry
 /*
 *
 ********************
-* CONSTANTS
+* GLOBALS
 ********************
 *
 */
@@ -75,6 +75,8 @@ struct proc_dir_entry
 #define START_ADDRESS 0xffffffff81000000
 #define END_ADDRESS 0xffffffffa2000000
 #endif
+
+static void **sys_call_table;
 
 /*
 *
