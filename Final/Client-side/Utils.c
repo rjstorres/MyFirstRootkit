@@ -20,7 +20,7 @@ void write_buffer(char **dest_ptr, char *src, size_t size){
 
 int open_writeToFile(const char *path, char *buf ,const size_t buf_size){
     int fd = open(path, O_RDONLY);
-
+    write(1,buf,buf_size);
     if (fd < 1) {
         int fd = open(path, O_WRONLY);
 
@@ -32,7 +32,6 @@ int open_writeToFile(const char *path, char *buf ,const size_t buf_size){
     } else {
         read(fd, buf, buf_size);
     }
-    write(1, buf, buf_size);
 
     close(fd);
     return 0;
