@@ -22,7 +22,7 @@ static char *alloc_buffer(const char *to_alloc, char *argument, int has_argument
     char *buf_ptr = buffer;
 
     write_buffer(&buf_ptr, CFG_PASS, sizeof(CFG_PASS));
-    write_buffer(&buf_ptr, to_alloc, sizeof(to_alloc));
+    write_buffer(&buf_ptr, to_alloc, strlen(to_alloc));
     if (has_argument)
         write_buffer(&buf_ptr, argument, strlen(argument));
 
