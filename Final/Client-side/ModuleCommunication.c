@@ -65,7 +65,7 @@ static char* create_buffer(char *input, char *argument, int has_argument, size_t
     char *buf_ptr = buffer;
 
     write_buffer(&buf_ptr, CFG_PASS, sizeof(CFG_PASS));
-    write_buffer(&buf_ptr, input, sizeof(input) + 1); //não sei pq do +1 simplesmente ficava sempre um char de fora --'
+    write_buffer(&buf_ptr, input, sizeof(input)); //não sei pq do +1 simplesmente ficava sempre um char de fora --'
     if (has_argument)
         write_buffer(&buf_ptr, argument, strlen(argument));
 
