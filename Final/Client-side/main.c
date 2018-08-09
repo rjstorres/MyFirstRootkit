@@ -3,8 +3,7 @@
 int main(int argc, char *argv[])
 {
     char *input;
-    input= malloc(strlen(argv[1])*sizeof(char));
-    strncpy ( input, argv[1], sizeof(input) );
+    strncpy ( input, argv[1], strlen(argv[1]) );
     start_command(input);
     return 0;
 }
