@@ -2,9 +2,9 @@
 
 int main(int argc, char const *argv[])
 {
-    char input[] = "asbcsfdf=safsfds  ";
+    char input[] = "hide_file=abscdfgs";
   
-    check_option_type(input);
+    start_command(input);
     return 0;
 }
 

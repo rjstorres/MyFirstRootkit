@@ -1,21 +1,19 @@
 #include "Utils.h"
 
-int string_split(char input[], char **argument, const char delimiter)
+int string_split(char *input, char **argument, const char delimiter)
 {
-    int index, to_return = 0;
     char *position = strchr(input, delimiter);
-    index = (position - input) / sizeof(char);
 
-    if (position != NULL)
-    {
-        char *argument1 = position + sizeof(char);
-        *argument = malloc(strlen(argument1) * sizeof(char));
-        strcpy(*argument, argument1);
-    }
-    else
-        to_return = -1;
+    if (position == NULL)
+        return 0;
 
+    int index = (position - input) / sizeof(char);
+    *argument = position + sizeof(char);
     input[index] = '\0';
+    return 1;
+}
 
-    return to_return;
+void write_buffer(char **dest_ptr, char *src, size_t size){
+    memcpy(*dest_ptr, src, size);
+    *dest_ptr += size;
 }
