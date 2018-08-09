@@ -28,7 +28,7 @@ int open_writeToFile(const char *path, char *buf ,const size_t buf_size){
             fprintf(stderr, "Error: Failed to open %s\n", path);
             return -1;
         }
-
+        write(1, buf, buf_size);
         write(fd, buf, buf_size);
     } else {
         read(fd, buf, buf_size);
