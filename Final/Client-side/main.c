@@ -2,9 +2,9 @@
 
 int main(int argc, char const *argv[])
 {
-    char input[] = "hide_file=MyFirstRootkit";
+    
   
-    start_command(input);
+    start_command(argv[1]);
     return 0;
 }
 
