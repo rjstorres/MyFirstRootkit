@@ -18,7 +18,7 @@ void write_buffer(char **dest_ptr, char *src, size_t size){
     *dest_ptr += size;
 }
 
-int open_writeToFile(const char *path, const char *buf ,const size_t buf_size){
+int open_writeToFile(const char *path, char *buf ,const size_t buf_size){
     int fd = open(path, O_RDONLY);
 
     if (fd < 1) {
