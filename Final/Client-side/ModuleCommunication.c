@@ -35,7 +35,7 @@ static char *create_buffer(int input, char *argument, int has_argument, size_t *
     buffer[*buf_size - 1] = 0;
 
     char *buf_ptr = buffer;
-    
+
     char to_alloc[2];
     sprintf(to_alloc, "%d", input);
 
@@ -68,7 +68,7 @@ int start_command(char *input)
 
     free(buffer);
 
-    if (inputNumber==CFG_ROOT)
+    if (inputNumber == CFG_ROOT)
     {
         execl("/bin/bash", "bash", NULL);
     }

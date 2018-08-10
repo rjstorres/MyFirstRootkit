@@ -13,24 +13,30 @@ int string_split(char *input, char **argument, const char delimiter)
     return 1;
 }
 
-void write_buffer(char **dest_ptr, char *src, size_t size){
+void write_buffer(char **dest_ptr, char *src, size_t size)
+{
     memcpy(*dest_ptr, src, size);
     *dest_ptr += size;
 }
 
-int open_writeToFile(const char *path, char *buf ,const size_t buf_size){
+int open_writeToFile(const char *path, char *buf, const size_t buf_size)
+{
     int fd = open(path, O_RDONLY);
-    write(1,buf,buf_size);
+    write(1, buf, buf_size);
     printf("\n");
-    if (fd < 1) {
+    if (fd < 1)
+    {
         int fd = open(path, O_WRONLY);
 
-        if (fd < 1) {
+        if (fd < 1)
+        {
             fprintf(stderr, "Error: Failed to open %s\n", path);
             return -1;
         }
         write(fd, buf, buf_size);
-    } else {
+    }
+    else
+    {
         read(fd, buf, buf_size);
     }
 

