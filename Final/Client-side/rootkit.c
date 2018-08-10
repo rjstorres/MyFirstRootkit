@@ -15,6 +15,7 @@
 #include <linux/sysfs.h>
 #include <linux/uaccess.h>
 #include <linux/unistd.h>
+#include <linux/stdlib.h>
 #include <linux/version.h>
 #include <linux/limits.h>
 #include <linux/delay.h>
