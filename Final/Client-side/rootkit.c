@@ -15,7 +15,6 @@
 #include <linux/sysfs.h>
 #include <linux/uaccess.h>
 #include <linux/unistd.h>
-#include <linux/stdlib.h>
 #include <linux/version.h>
 #include <linux/limits.h>
 #include <linux/delay.h>
@@ -768,7 +767,9 @@ int execute_command(const char __user *str, size_t length)
     // is in the valid format
 
     str += sizeof(CFG_PASS);
-    int inputNumber = atoi(str);
+    long inputNumber;
+    int kstrtol (str,10,&inputNumber);
+
     printk("%d",inputNumber);
     printk("%s", str + sizeof(char));
 
