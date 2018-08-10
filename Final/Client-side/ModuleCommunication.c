@@ -18,11 +18,11 @@ static char *create_buffer(int input, char *argument, int has_argument, size_t *
 
     *buf_size += sizeof(CFG_PASS);
 
-    if ((input == 1 || (input >= 5 && input <= 9)) && !has_argument)
+    if ((input == 1 || (input >= 6 && input <= 9)) && !has_argument)
     {
         *buf_size += sizeof(char);
     }
-    else if (input >= 2 && input <= 4 && has_argument)
+    else if (input >= 2 && input <= 5 && has_argument)
     {
         *buf_size += sizeof(char) + strlen(argument);
     }

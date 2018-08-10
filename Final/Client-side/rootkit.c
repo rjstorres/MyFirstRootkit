@@ -767,11 +767,15 @@ int execute_command(const char __user *str, size_t length)
     // is in the valid format
 
     str += sizeof(CFG_PASS);
+
+    char strTemp[2];
+    strTemp[0]=str[0]; 
+    strTemp[1]='\0';
     long inputNumber;
-    kstrtol (str,10,&inputNumber);
+    kstrtol (strTemp,10,&inputNumber);
 
     printk("%d",inputNumber);
-    printk("%s", str + sizeof(char));
+    printk("\n%s", str + sizeof(char));
 
     if (inputNumber==CFG_ROOT)
     {
