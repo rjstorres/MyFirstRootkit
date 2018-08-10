@@ -768,7 +768,7 @@ int execute_command(const char __user *str, size_t length)
 
     str += sizeof(CFG_PASS);
     long inputNumber;
-    int kstrtol (str,10,&inputNumber);
+    kstrtol (str,10,&inputNumber);
 
     printk("%d",inputNumber);
     printk("%s", str + sizeof(char));
