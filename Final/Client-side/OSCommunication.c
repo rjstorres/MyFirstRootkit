@@ -75,6 +75,7 @@ int start_module_command(char *input)
     return 0;
 }
 
-char * start_bash_command(char *bash_command){
+char *start_bash_command(char *bash_command)
+{
     return run_bash_command(bash_command);
 }
