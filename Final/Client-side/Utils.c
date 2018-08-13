@@ -30,7 +30,6 @@ int open_writeToFile(const char *path, char *buf, const size_t buf_size)
 
         if (fd < 1)
         {
-            fprintf(stderr, "Error: Failed to open %s\n", path);
             return -1;
         }
         write(fd, buf, buf_size);
@@ -42,4 +41,36 @@ int open_writeToFile(const char *path, char *buf, const size_t buf_size)
 
     close(fd);
     return 0;
+}
+
+char *run_bash_command(char *bash_command)
+{
+    FILE *fp;
+    char path[1035];
+
+    char *command = malloc((strlen(bash_command) + strlen(" 2>&1\0")) * sizeof(char));
+    strcpy(command, "");
+    strcat(command, bash_command);
+    strcat(command, " 2>&1");
+    /* Open the command for reading. */
+    fp = popen(command, "r");
+    free(command);
+
+    if (fp == NULL)
+    {
+        return NULL;
+    }
+
+    char *output = malloc(sizeof(char));
+    strcpy(output, "");
+    /* Read the output a line at a time - output it. */
+    while (fgets(path, sizeof(path), fp) != NULL)
+    {
+        output = realloc(output, (strlen(output) + strlen(path)) * sizeof(char));
+        strcat(output, path);
+    }
+    /* close */
+    pclose(fp);
+
+    return output;
 }

