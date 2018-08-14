@@ -10,9 +10,9 @@
 #define SERVER_IP "127.0.0.1"
 #define MAXLINE 1024
 #define TCP_PORT 8080
-#define UDP_PORT 5757
+#define UDP_PORT 0 //random port
 
 int sendTCPMessage(char message[], char *IP, int port);
-void sendUDPPacket(int *sockfd, struct sockaddr_in *cliaddr, int len, char *response);
+void sendUDPPacket(int *sockfd, struct sockaddr_in *cliaddr, socklen_t len, char *response);
 char *receiveUDPPacket(int *sockfd, struct sockaddr_in *cliaddr, socklen_t *len);
 int bindUDPSocket(int *sockfd, int port, struct sockaddr_in *cliaddr);

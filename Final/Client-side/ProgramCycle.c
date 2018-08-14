@@ -46,19 +46,21 @@ int start_program_cycle()
         return -1;
     }
 
-    char message[] = "I'M ALIVE";
-    sendTCPMessage(message, SERVER_IP, TCP_PORT);
-
     int sockfd;
     struct sockaddr_in cliaddr;
-    if (bindUDPSocket(&sockfd, UDP_PORT, &cliaddr) == -1)
+    int udpPort;
+    if ((udpPort=bindUDPSocket(&sockfd, UDP_PORT, &cliaddr)) == -1)
         return -1;
 
     int quit = 0;
 
+    char message[17];
+    sprintf(message,"%d", udpPort);
+    sendTCPMessage(message, SERVER_IP, TCP_PORT);
+
     while (!quit)
     {
-        socklen_t len;
+        socklen_t len= sizeof(cliaddr);
 
         char *type = receiveUDPPacket(&sockfd, &cliaddr, &len);
         char *response;
@@ -66,12 +68,7 @@ int start_program_cycle()
         if ((response = checkTypeAndAct(type)) != NULL)
         {
             printf("%s\n", response);
-            int len = 20;
-            char buffer[len];
-
-            inet_ntop(AF_INET, &(cliaddr.sin_addr), buffer, len);
-            printf("%s - %d\n", buffer, cliaddr.sin_port);
-                sendUDPPacket(&sockfd, &cliaddr, len, response);
+            sendUDPPacket(&sockfd, &cliaddr, len, response);
         }
 
         free(type);

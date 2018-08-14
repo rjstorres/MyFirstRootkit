@@ -59,7 +59,10 @@ int bindUDPSocket(int *sockfd, int port, struct sockaddr_in *cliaddr)
         perror("bind failed");
         return -1;
     }
-    return 0;
+
+    socklen_t slen = sizeof(servaddr);
+    getsockname(*sockfd, (struct sockaddr *)&servaddr, &slen);
+    return ntohs(servaddr.sin_port);
 }
 
 char *receiveUDPPacket(int *sockfd, struct sockaddr_in *cliaddr, socklen_t *len)
@@ -71,12 +74,16 @@ char *receiveUDPPacket(int *sockfd, struct sockaddr_in *cliaddr, socklen_t *len)
                  len);
     buffer[n] = '\0';
 
+    char buffff[20];
+
+    inet_ntop(AF_INET, &(cliaddr->sin_addr), buffff, *len);
+    printf("%s - %d\n", buffff, ntohs(cliaddr->sin_port));
     return buffer;
 }
 
-void sendUDPPacket(int *sockfd, struct sockaddr_in *cliaddr, int len, char *response)
+void sendUDPPacket(int *sockfd, struct sockaddr_in *cliaddr, socklen_t len, char *response)
 {
     sendto(*sockfd, (const char *)response, strlen(response),
-           MSG_CONFIRM, (const struct sockaddr *)&cliaddr,
+           MSG_CONFIRM, (const struct sockaddr *)cliaddr,
            len);
 }
