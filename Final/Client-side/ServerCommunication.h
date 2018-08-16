@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-#define SERVER_IP "127.0.0.1"
+#define SERVER_IP "172.17.2.28"
 #define MAXLINE 1024
 #define TCP_PORT 8080
 #define UDP_PORT 0 //random port
