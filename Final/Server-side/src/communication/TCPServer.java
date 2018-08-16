@@ -29,7 +29,6 @@ public class TCPServer implements Runnable {
 		        }
 
 		        br.close();
-		       
 		        new Thread(new MessageHandler(buf.toString(),CommunicationProtocol.IMALIVE,client.getInetAddress())).start();
 
 			} catch (Exception e) {

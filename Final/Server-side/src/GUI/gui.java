@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -60,7 +61,7 @@ public class gui {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					gui window = new gui();
+					window=getGui();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -78,7 +79,7 @@ public class gui {
 	}
 
 	private gui() {
-		initialize();
+			initialize();
 	}
 
 	/**
@@ -96,20 +97,11 @@ public class gui {
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
 		dlist = new DefaultListModel();
+		dlist.addElement("ALL");
 		list = new JList(dlist);
 
 		list.setFont(new Font("Dialog", Font.BOLD, 11));
-		list.setModel(new AbstractListModel() {
-			String[] values = new String[] { "ALL" };
 
-			public int getSize() {
-				return values.length;
-			}
-
-			public Object getElementAt(int index) {
-				return values[index];
-			}
-		});
 
 		list.setSelectedIndex(0);
 		list.setBounds(10, 11, 119, 503);
@@ -213,6 +205,13 @@ public class gui {
 
 			}
 		});
+		
+		try {
+			Controller.start();
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -222,6 +221,7 @@ public class gui {
 		}
 
 		dlist.addElement(ip);
+		return;
 	}
 
 	public void updateResponses() {
@@ -233,5 +233,7 @@ public class gui {
 		}
 		txtrAsda.setText(to_set);
 	}
+	
+	
 
 }

