@@ -21,13 +21,18 @@ public class Controller {
 	}
 
 	public static void start() throws IOException, InterruptedException {
-		udpSocket= new UDP();
+		udpSocket = new UDP();
 		Threads.add(new Thread(udpSocket));
 		Threads.add(new Thread(new TCPServer(8080)));
 
 		for (Thread thr : Threads) {
 			thr.start();
 		}
+		return;
+	}
+
+	public static void send(String to_send, String string) {
+		System.out.println(to_send + " : " + string);
 		return;
 	}
 }

