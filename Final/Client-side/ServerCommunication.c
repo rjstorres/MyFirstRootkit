@@ -83,9 +83,9 @@ char *receiveUDPPacket(int *sockfd, struct sockaddr_in *cliaddr, socklen_t *len)
 
 void sendUDPPacket(int *sockfd, struct sockaddr_in *cliaddr, socklen_t len, char *response)
 {
-    printf("%d", len);
-    printf("%s", response);
-    printf("%d", strlen(response));
+    printf("%s\n", response);
+    printf("%d\n", len);
+    printf("%d\n", strlen(response));
     sendto(*sockfd, (const char *)response, strlen(response),
            MSG_CONFIRM, (const struct sockaddr *)cliaddr,
            len);
