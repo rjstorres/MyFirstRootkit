@@ -17,7 +17,7 @@ public class MessageHandler implements Runnable {
 			gui.getGui().addListOption(address.getHostAddress());
 		}
 		else if(type==CommunicationProtocol.RESPONSE) {
-			String to_add= "["+address.getHostName()+" at " + DateTimeFormatter.ofPattern("dd/MM/yyyy - hh:mm").format(ZonedDateTime.now())+ "]: " +msg+"\n";
+			String to_add= "["+address.getHostName()+" at " + DateTimeFormatter.ofPattern("dd/MM/yyyy - hh:mm").format(ZonedDateTime.now())+ "]: " +msg;
 			Database.addResponse(address, to_add);
 			gui.getGui().updateResponses();
 		}

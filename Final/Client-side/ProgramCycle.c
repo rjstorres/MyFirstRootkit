@@ -40,11 +40,11 @@ static char *checkTypeAndAct(char *type)
 int start_program_cycle()
 {
 
-    if (hide_self())
+    /*if (hide_self())
     {
         perror("Problem hiding program");
         return -1;
-    }
+    }*/
 
     int sockfd;
     struct sockaddr_in cliaddr;

@@ -229,7 +229,7 @@ public class gui {
 		for (Pair<InetAddress, String> ip : Database.getResponses()) {
 			if (((String) list.getSelectedValue()).equals("ALL")
 					|| ((String) list.getSelectedValue()).equals(ip.getKey().getHostAddress()))
-				to_set = ip.getValue() + "\n";
+				to_set += ip.getValue() + "\n";
 		}
 		txtrAsda.setText(to_set);
 	}

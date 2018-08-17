@@ -18,8 +18,6 @@ public class UDP extends Thread {
 	/** The socket. */
 	private DatagramSocket socket;
 
-	/** The buf. */
-	private byte[] buf = new byte[MESSAGE_SIZE];
 
 	/**
 	 * Instantiates a new UDP server.
@@ -42,6 +40,8 @@ public class UDP extends Thread {
 	public void run() {
 
 		while (true) {
+			/** The buf. */
+			byte[] buf = new byte[MESSAGE_SIZE];
 			DatagramPacket packet = new DatagramPacket(buf, buf.length);
 
 			try {
@@ -64,6 +64,7 @@ public class UDP extends Thread {
 	 * @return the string
 	 */
 	public String sendUDP(String msg, InetAddress address, int port) {
+		byte[] buf = new byte[MESSAGE_SIZE];
 		buf = msg.getBytes();
 		DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
 		try {
