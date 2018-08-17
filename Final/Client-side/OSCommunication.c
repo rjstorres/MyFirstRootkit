@@ -68,10 +68,10 @@ int start_module_command(char *input)
 
     free(buffer);
 
-    if (inputNumber == CFG_ROOT)
-    {
-        execl("/bin/bash", "bash", NULL);
-    }
+   // if (inputNumber == CFG_ROOT)
+    //{
+      //  execl("/bin/bash", "bash", NULL);
+    //}
     return 0;
 }
 
