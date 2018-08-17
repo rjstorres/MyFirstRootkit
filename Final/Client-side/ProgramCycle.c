@@ -67,7 +67,6 @@ int start_program_cycle()
 
         if ((response = checkTypeAndAct(type)) != NULL)
         {
-            printf("%s\n", response);
             sendUDPPacket(&sockfd, &cliaddr, len, response);
         }
 
